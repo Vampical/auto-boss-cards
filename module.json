@@ -1,0 +1,18 @@
+{
+    "name": "auto-boss-cards",
+    "author": "Vampic",
+    "description": "Automatically selects owned cards and collection effects for bosses and BAMs, with English and Russian settings.",
+    "version": "1.6.20",
+    "options": {
+        "cliName": "Auto Boss Cards",
+        "guiName": "Auto Boss Cards",
+        "settingsVersion": 3,
+        "settingsFile": "config.json",
+        "settingsMigrator": "./lib/migration.js",
+        "reloadable": true
+    },
+    "disableAutoUpdate": false,
+    "servers": [
+        "https://raw.githubusercontent.com/Vampical/auto-boss-cards/main/"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "files": {
+        "README.en.md": "33000c395e564d9433d7959c92164faf65f749564716a6b8478cd5687c81e647",
+        "README.md": "0792f79397b9076133ca996235bbda586b7fbc155bcda704e5daacf4081e66f9",
+        "index.js": "529f340fe01d0b2c27d09a8d05da5db10639d1080b87cc0da99de47645ad4a68",
+        "lib/catalog.js": "40cc4b90474d0670b23eef12e85ffce606987b260293c4b50a0a547e964efc87",
+        "lib/damage.js": "6e16fb6f71a2cf6ec2724ceea37724552d759cef90853a3921494db61e7427f1",
+        "lib/effects.js": "9e8122a3e3a60d96eb455044725e107331827d00b7520841fb1aa0003cf84210",
+        "lib/i18n.js": "e67c99dad02e1461b7f6baca065bae6d7f6723dd0d3bd0e583db0a1b42a2384a",
+        "lib/locales/en.json": "384c4de467b57e0125ae0959fed1ffcc2b9023e80ab419d5284c2b737ba77efd",
+        "lib/locales/ru.json": "671ace2839e31d5d9fb121fb5ee16c151d020dc1cf8ee758e011e6bf6507c2ae",
+        "lib/npc.js": "4d868583729e3887ab6c9a36067bb6b86f0f82851212e74ad5c795ce12440f63",
+        "lib/planner.js": "43427b23ff06e80d87ca1ceeb959ce794311f2d7b16f4cfa24f5dcf41f18a2bb",
+        "lib/protocol.js": "13acedaf7bf82f0eda4e2ef9b71aaaf324bb617231e58859151fc53bb3a96fdf",
+        "lib/settings.js": "48a42a90461d2673fc1353f802be07a0a14b8b84fc0b3ee803a0051c8630d141",
+        "module.json": "692a81420cf6be5edcfe12320d72e1cac23a74ca78ca77c510654988b37b5dc3",
+        "lib/config.js": "b7ab4f851a7bb3ad0f624badb79cc5b206bcdb1cfc1a78b6b2da9081850cc897",
+        "lib/migration.js": "b17769879187e0d56f2ac89de1257ea3ecfec4a8de87a0b460c411551831d3a8",
+        "lib/settings_ru.js": "199c166748082d8c4b22109d3830858d5a66ff3753a5945dc8ee671e882ca2fc",
+        "lib/abnormality.js": "9c1a46760273ba92e37567660df5d5d310b647f55aafc1abd36d139780d0a938",
+        "lib/passivity.js": "b1373177eba17fbcd39807f639096743615b75940e49b0ad1d2c0bef29467541"
+    }
+}
