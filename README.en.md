@@ -40,7 +40,7 @@ Choose a shared priority or a separate priority for each of the 13 classes, plus
 
 With damage selection enabled, the module evaluates the whole set using your current stats, class characteristics and **the highest learned level of each skill**. Lower and unlearned levels are excluded. Temporary changes to available skills do not erase known skills or their levels; a newly learned higher level is considered at the next selection.
 
-Power, physical and magical attack, crit power and the appropriate piercing are compared by their expected benefit to your character. A card with another offensive stat can therefore be better than a card with the selected crit-power stat. With damage selection disabled, the module aims to maximize the chosen stat. Bonuses against specific enemy species follow the current target when that setting is enabled.
+Power, physical and magical attack, crit power, the appropriate piercing and percentage hit-damage bonuses are compared by their expected benefit to your character. Bonuses such as Rogash's effect count only against the matching enemy species; their rarity and conditions are taken into account. A card with another offensive stat can therefore be better than a card with the selected crit-power stat. With damage selection disabled, the module aims to maximize the chosen stat. Bonuses against specific enemy species follow the current target when that setting is enabled.
 
 The percentage shown for a deck is an approximate estimate of the critical-hit damage gained from its cards. It is not a complete estimate of damage over a fight: your play, skill usage frequency and buff uptime also affect the result.
 
@@ -48,7 +48,7 @@ The percentage shown for a deck is an approximate estimate of the critical-hit d
 
 Collections can use separate priorities or automatic selection. They are selected after the cards, taking the resulting deck, unlocked collections, activated card rarities and the active-effect limit into account.
 
-Permanent bonuses and supported critical-hit buffs count toward selection. Buffs that require a kill or resurrection do not improve a set's score against a living boss; permanent bonuses from those collections still count.
+Permanent bonuses and supported critical-hit buffs count toward selection. Buffs that require a kill or resurrection do not improve a set's score against a living boss; permanent bonuses from those collections still count. Bonuses that require knockdown, stun or another special target state are excluded.
 
 For Priest and Mystic, **Magical Defense** selects general magical defense to improve the resistance reduction from Triple Nemesis and Volley of Curses. Defense against a specific monster species is excluded from this purpose.
 

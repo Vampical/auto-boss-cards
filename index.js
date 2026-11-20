@@ -15,6 +15,8 @@ const { METHOD: ABNORMALITY_METHOD } = require("./lib/abnormality");
 
 const { REPLACEMENTS, staticScore } = require("./lib/effects");
 
+const { TYPES: PASSIVITY_TYPES } = require("./lib/passivity");
+
 const { NAME, toolboxLanguage, text, statName, settingsStructure } = require("./lib/i18n");
 
 const READ_REAL = {
@@ -786,7 +788,7 @@ class NetworkMod {
         const equipped = this.presets.get(this.currentPreset);
 
         context.fixedPassives = this.mod.settings.manageCombines ? [] : this.activeCollectionPassives()
-            .filter(id => REPLACEMENTS[this.catalog.passives.get(id)?.type]);
+            .filter(id => REPLACEMENTS[this.catalog.passives.get(id)?.type] || this.catalog.passives.get(id)?.type === PASSIVITY_TYPES.DAMAGE);
 
         // Unknown equipped IDs must not be silently removed on a mismatched DC.
         if (Array.from(equipped)
@@ -1088,7 +1090,9 @@ class NetworkMod {
         }) + this.t("deckPiercing", {
             stat: statName(this.language, `${plan.metrics[0].startsWith("physical") ? "physical" : "magical"}Piercing`),
             value: format(plan.deck.piercing)
-        }) + this.t("deckReference") : "");
+        }) + (plan.deck.damageBonus ? this.t("deckDamageBonus", {
+            value: format(plan.deck.damageBonus * 100)
+        }) : "") + this.t("deckReference") : "");
     }
 
     preview() {

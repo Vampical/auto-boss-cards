@@ -1,23 +1,23 @@
 {
     "files": {
-        "README.en.md": "66820997d3ad8e33c48e283668af537dac0b7680312aadeef2dcfa084e926d01",
-        "README.md": "b0987508c2f5f8e9f0de489bba7c53989c1a0259f030da7d2e3aadbf5b740974",
-        "index.js": "467c899c2b9c3004a746829fd5ced369a8f9930fca651f47270769a406e1b47f",
+        "README.en.md": "62137503539e23b97feaa0e781f497d627e43961b012835f596ee665f387a289",
+        "README.md": "846c5d903efabe55c74ef7332eada8b383f63e2f8fd80387c56a2d0d3b468c8e",
+        "index.js": "701c6551a09eb974f907e103978f2c2a69afeb88534aa89c2ebd4bf753d3f493",
         "lib/catalog.js": "0942f7919555e94cc293075be5765516082cdeed5b77bd0164a1c6b83168d2a5",
-        "lib/damage.js": "6e16fb6f71a2cf6ec2724ceea37724552d759cef90853a3921494db61e7427f1",
-        "lib/effects.js": "9e8122a3e3a60d96eb455044725e107331827d00b7520841fb1aa0003cf84210",
+        "lib/damage.js": "79b259bda04e9cdcc9ee1ed33a1689392823a4bc1aaec1c84e1d1e30b73863fa",
+        "lib/effects.js": "6290316cf95fbe6a26ed24a05e1179c3f925f316a323a2d6bb924c4168c84ca9",
         "lib/i18n.js": "e67c99dad02e1461b7f6baca065bae6d7f6723dd0d3bd0e583db0a1b42a2384a",
-        "lib/locales/en.json": "384c4de467b57e0125ae0959fed1ffcc2b9023e80ab419d5284c2b737ba77efd",
-        "lib/locales/ru.json": "671ace2839e31d5d9fb121fb5ee16c151d020dc1cf8ee758e011e6bf6507c2ae",
+        "lib/locales/en.json": "601c22392cb591b98ed36274fb3741c5536a9aa8e621ca4358727dc960835ce6",
+        "lib/locales/ru.json": "4cd2c1081f963159bce3905f94f06f95ccc6637601b99eb3be8efb6110bb0195",
         "lib/npc.js": "ab29e40f93fa640b0c37a1c6bd507d92d8f5ae82309f3dbf5aee3713f40f6861",
-        "lib/planner.js": "43427b23ff06e80d87ca1ceeb959ce794311f2d7b16f4cfa24f5dcf41f18a2bb",
+        "lib/planner.js": "c1998c6e7308a4f01a239550a2e5e94fb5b4dd774d81e8aa559f1b905b152c98",
         "lib/protocol.js": "13acedaf7bf82f0eda4e2ef9b71aaaf324bb617231e58859151fc53bb3a96fdf",
         "lib/settings.js": "48a42a90461d2673fc1353f802be07a0a14b8b84fc0b3ee803a0051c8630d141",
-        "module.json": "d20ff05238e340d8916b2f57ba2d6930958c39b565661cd1ce3b9229332445a3",
+        "module.json": "38bfb2a9080696a3aa4541f170e0c6e1c94f5b10c89fd820e827154380efe17b",
         "lib/config.js": "b7ab4f851a7bb3ad0f624badb79cc5b206bcdb1cfc1a78b6b2da9081850cc897",
         "lib/migration.js": "b17769879187e0d56f2ac89de1257ea3ecfec4a8de87a0b460c411551831d3a8",
         "lib/settings_ru.js": "199c166748082d8c4b22109d3830858d5a66ff3753a5945dc8ee671e882ca2fc",
         "lib/abnormality.js": "9c1a46760273ba92e37567660df5d5d310b647f55aafc1abd36d139780d0a938",
-        "lib/passivity.js": "b1373177eba17fbcd39807f639096743615b75940e49b0ad1d2c0bef29467541"
+        "lib/passivity.js": "fd7d5974d8221e5f2f62f436b2b70b9e420657fcdb651fd9f8ab8e3526737983"
     }
 }
