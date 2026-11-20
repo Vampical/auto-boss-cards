@@ -2,7 +2,7 @@
     "name": "auto-boss-cards",
     "author": "Vampic",
     "description": "Automatically selects owned cards and collection effects for bosses and BAMs, with English and Russian settings.",
-    "version": "1.6.20",
+    "version": "1.6.21",
     "options": {
         "cliName": "Auto Boss Cards",
         "guiName": "Auto Boss Cards",

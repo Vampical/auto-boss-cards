@@ -24,9 +24,11 @@ You can use `bosscards` instead of `bcards`.
 
 ## When the set changes
 
-The module selects the nearest living boss or BAM when an eligible enemy appears, is killed or disappears. If the selected target changes, cards and collections are applied once. With several enemies present, the death or disappearance of the selected target causes a switch to the nearest surviving target.
+The module selects the nearest living boss or BAM when an eligible enemy appears, is killed or disappears. Only monsters with the primary aggro indicator, the yellow circle under the selected player, are eligible. The purple secondary-target circle does not replace this requirement. Selection does not wait for the circle to appear in combat. If the selected target changes, cards and collections are applied once. With several enemies present, the death or disappearance of the selected target causes a switch to the nearest surviving target.
 
 Normal hits, enemy health changes, movement and stat updates do not reapply a completed set. Enemies that appear while the area is loading are considered after loading finishes.
+
+Character death cancels an unfinished selection. Resurrection alone does not start another card or collection change.
 
 If your character is in combat, changes wait until combat ends. The module changes your current card preset. After application, you can manually remove a card or disable a collection: your choice remains until the next target change or an explicit request to select again. A manual action also stops any remaining changes in an unfinished application.
 

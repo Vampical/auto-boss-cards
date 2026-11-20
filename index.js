@@ -193,6 +193,8 @@ class NetworkMod {
         };
 
         this.loading = true;
+        this.lifeEpoch = 0;
+        this.revivalPending = false;
         this.registered = new Map();
         this.presets = new Map();
         this.currentPreset = 0;
@@ -276,10 +278,13 @@ class NetworkMod {
 
         this.hook("S_SPAWN_ME", 3, event => {
             const wasLoading = this.loading;
+            const wasAlive = this.me.alive;
+            const wasReviving = this.revivalPending;
 
             this.loading = false;
             this.me.loc = event.loc;
-            this.me.alive = event.alive;
+            this.setAlive(event.alive);
+            this.revivalPending = !event.alive;
 
             if (!this.cardsReady || !this.combinesReady) {
                 this.requestSnapshots(true);
@@ -298,7 +303,7 @@ class NetworkMod {
             }
 
             if (wasLoading || !this.target) {
-                this.chooseTarget();
+                this.chooseTarget(wasAlive && !wasReviving);
             }
 
             this.schedule();
@@ -320,7 +325,12 @@ class NetworkMod {
 
         this.hook("S_CREATURE_LIFE", 3, event => {
             if (this.isMe(event.gameId)) {
-                this.me.alive = event.alive;
+                this.setAlive(event.alive);
+
+                if (event.alive && (!this.cardsReady || !this.combinesReady)) {
+                    this.requestSnapshots(true);
+                }
+
                 this.schedule();
             } else if (!event.alive) {
                 this.removeMob(event.gameId);
@@ -542,6 +552,24 @@ class NetworkMod {
         return this.me.gameId !== null && id === this.me.gameId;
     }
 
+    setAlive(alive) {
+        this.me.alive = alive;
+
+        if (alive) return;
+
+        this.lifeEpoch++;
+        this.revivalPending = true;
+        this.selectionPending = false;
+        this.selectionPlan = null;
+
+        if (this.pending) {
+            this.cardsReady = false;
+            this.combinesReady = false;
+        }
+
+        this.cancelTimers();
+    }
+
     async loadDamageSkills() {
         const epoch = this.epoch;
         const templateId = this.me.templateId;
@@ -560,8 +588,8 @@ class NetworkMod {
         }
     }
 
-    requestSelection() {
-        this.selectionPending = Boolean(this.target);
+    requestSelection(allowed = true) {
+        this.selectionPending = Boolean(allowed && this.target && this.me.alive);
         this.selectionPlan = null;
         this.blocked = false;
         this.lastNotice = "";
@@ -572,6 +600,8 @@ class NetworkMod {
         if (!this.catalog.loaded || mob.hostile === false && !confirmedBoss) return;
 
         const epoch = this.epoch;
+        const lifeEpoch = this.lifeEpoch;
+        const wasAlive = this.me.alive;
 
         try {
             const npc = await this.catalog.npc(mob.zone, mob.template, confirmedBoss);
@@ -583,7 +613,7 @@ class NetworkMod {
             mob.npc = npc;
 
             if (reselect && (wasEligible !== this.isEligible(mob) || this.target === mob && !this.isEligible(mob))) {
-                this.chooseTarget();
+                this.chooseTarget(wasAlive && lifeEpoch === this.lifeEpoch);
             }
         } catch (error) {
             this.debug(`NpcData ${mob.zone}:${mob.template}: ${error.message || error}`);
@@ -637,7 +667,7 @@ class NetworkMod {
         return this.isEligible(mob) && (mob.rank === 3 || config.detectOnSpawn && this.distance(mob) <= config.detectionRange * 100);
     }
 
-    chooseTarget() {
+    chooseTarget(allowed = true) {
         let best = null;
 
         for (const mob of this.mobs.values()) {
@@ -651,7 +681,7 @@ class NetworkMod {
         if (best?.gameId === this.target?.gameId) return;
 
         this.target = best;
-        this.requestSelection();
+        this.requestSelection(allowed);
 
         if (best) {
             this.debug(this.t("targetDebug", {
@@ -1233,6 +1263,8 @@ class NetworkMod {
         for (const key of [
             "me",
             "loading",
+            "lifeEpoch",
+            "revivalPending",
             "registered",
             "presets",
             "currentPreset",
@@ -1266,6 +1298,8 @@ class NetworkMod {
         for (const key of [
             "me",
             "loading",
+            "lifeEpoch",
+            "revivalPending",
             "registered",
             "presets",
             "currentPreset",
