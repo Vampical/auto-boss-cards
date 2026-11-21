@@ -1,7 +1,7 @@
 {
     "replacementEstimate": " [Species passive conflict: lower-bound estimate; server passive-slot order is unknown.]",
     "healerSupport": " [Resistance debuff: general magical defense feeds StatLink; species defense does not strengthen it.]",
-    "healerCrit": " [Healer: offensive cards and magical crit power collections; magical defense is ignored.]",
+    "healerCrit": " [Healer: offensive cards and collections; magical defense is ignored.]",
     "stat_power": "Power",
     "stat_physicalPiercing": "Physical piercing",
     "stat_magicalPiercing": "Magical piercing",
@@ -10,7 +10,7 @@
     "deckDamageBonus": " Hit damage: +{value}%.",
     "deckPiercing": " {stat}: +{value}.",
     "deckReference": " [Calculation resistance: 43500.]",
-    "deckPower": " Power: +{power}; estimated critical damage gain from the deck: {gain}%.",
+    "deckPower": " Power: +{power}; estimated critical damage gain from cards and collections: {gain}%.",
     "stat_magicalDefense": "Magical defense",
     "stat_physicalCritPower": "Physical crit power",
     "stat_magicalCritPower": "Magical crit power",

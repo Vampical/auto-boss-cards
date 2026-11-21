@@ -7,15 +7,13 @@ const protocol = require("./lib/protocol");
 
 const { spawnHostility } = require("./lib/npc");
 
-const { score, planDeck, planDamageDeck, planCombines, collectionPassives } = require("./lib/planner");
+const { score, planDeck, planDamageDeck, planCombines, planLoadout, collectionPassives } = require("./lib/planner");
 
 const damage = require("./lib/damage");
 
 const { METHOD: ABNORMALITY_METHOD } = require("./lib/abnormality");
 
-const { REPLACEMENTS, staticScore } = require("./lib/effects");
-
-const { TYPES: PASSIVITY_TYPES } = require("./lib/passivity");
+const { mergeEffects, staticScore } = require("./lib/effects");
 
 const { NAME, toolboxLanguage, text, statName, settingsStructure } = require("./lib/i18n");
 
@@ -762,18 +760,13 @@ class NetworkMod {
     plan() {
         if (!this.catalog.loaded || !this.isEligible(this.target) || this.mobs.get(this.target.gameId) !== this.target || !this.cardsReady) return null;
 
+        if (this.mod.settings.manageCombines && !this.combinesReady) return null;
+
         const limits = this.catalog.levels.get(this.collectionLevel);
-        const metrics = settings.priorities(this.mod.settings, this.me.job);
+        const mode = settings.selectionMode(this.mod.settings, this.me.job);
+        const { metrics, collectionMetrics, healerSupport, healerOffense, healerCrit, powerMode, damageMode } = mode;
 
         if (!limits || !metrics[0] || !this.presets.has(this.currentPreset)) return null;
-
-        const healer = [6, 7].includes(this.me.job);
-        const healerSupport = healer && metrics[0] === "magicalDefense";
-        const healerCrit = healer && metrics[0] === "magicalCritPower";
-
-        if (healerCrit) {
-            metrics[1] = null;
-        }
 
         const context = {
             ...this.target.npc,
@@ -781,14 +774,7 @@ class NetworkMod {
             healerSupport
         };
 
-        const collectionMetrics = healerSupport || healerCrit ? [metrics[0], healerCrit ? null : metrics[1]] : settings.collectionPriorities(
-            this.mod.settings,
-            metrics
-        );
         const equipped = this.presets.get(this.currentPreset);
-
-        context.fixedPassives = this.mod.settings.manageCombines ? [] : this.activeCollectionPassives()
-            .filter(id => REPLACEMENTS[this.catalog.passives.get(id)?.type] || this.catalog.passives.get(id)?.type === PASSIVITY_TYPES.DAMAGE);
 
         // Unknown equipped IDs must not be silently removed on a mismatched DC.
         if (Array.from(equipped)
@@ -796,15 +782,11 @@ class NetworkMod {
                 .activation))
             return null;
 
-        const offensive = /^(physical|magical)(CritPower|Attack|Piercing|DefenseReduction)$/.test(metrics[0]);
-        const powerMode = this.mod.settings.optimizePower && (offensive || healerSupport);
-        const damageMode = healerSupport && powerMode || !healer && this.mod.settings.collectionPriority === "cards" && offensive;
-
-        if (powerMode || this.mod.settings.manageCombines && damageMode) {
-            context.damage = damage.profile(this.playerStats, this.damageSkills, metrics[0], this.learnedSkillRanks);
+        if (powerMode) {
+            context.damage = damage.profile(this.playerStats, this.damageSkills, mode.profileMetric, this.learnedSkillRanks);
             const sources = this.statSources;
 
-            if (!context.damage || powerMode && (!damage.DAMAGE_STATS.every(key => Number.isFinite(context.damage.stats[key])) || !Number.isFinite(this.playerStats.genericCritical)) || !sources?.cards || this.mod.settings.manageCombines && (!this.combinesReady || !sources.combines))
+            if (!context.damage || !damage.DAMAGE_STATS.every(key => Number.isFinite(context.damage.stats[key])) || !Number.isFinite(this.playerStats.genericCritical) || !sources?.cards || !this.combinesReady || !sources.combines)
                 return null;
 
             // Rebase against the loadout and procs captured with the stat update.
@@ -815,22 +797,20 @@ class NetworkMod {
 
             if (sources.procs.some(id => this.catalog.ignoredProcIds.has(id) && !this.catalog.abnormalities.has(id))) return null;
 
-            const oldProcs = sources.procs.filter(id => this.mod.settings.manageCombines || this.catalog.ignoredProcIds.has(id));
-
             for (const stat of Object.keys(context.damage.stats)) {
                 context.damage.stats[stat] -= staticScore(
                     oldCards,
                     this.catalog,
                     stat,
                     context
-                ) + (this.mod.settings.manageCombines ? staticScore(
+                ) + staticScore(
                     oldCombines,
                     this.catalog,
                     stat,
                     context
-                ) : 0);
+                );
 
-                for (const id of oldProcs) {
+                for (const id of sources.procs) {
                     for (const effect of this.catalog.abnormalities.get(id)?.effects || []) {
                         if (effect.method === ABNORMALITY_METHOD.ADD_ABSOLUTE && effect.tick === 0 && settings.STATS[stat].types.includes(effect.type)) {
                             context.damage.stats[stat] -= effect.value;
@@ -840,28 +820,36 @@ class NetworkMod {
             }
         }
 
-        const deck = powerMode ? planDamageDeck(
-            this.catalog,
-            this.registered,
-            equipped,
-            limits,
-            metrics,
-            context
-        ) : planDeck(
-            this.catalog,
-            this.registered,
-            equipped,
-            limits,
-            metrics,
-            context
-        );
+        if (!this.mod.settings.manageCombines) {
+            const fixed = planCombines(this.catalog, this.registered, this.activeCombines, limits.combines, collectionMetrics, context, true);
 
-        context.deckPassives = deck.ids.flatMap(id => this.catalog.cards.get(id).passives);
+            context.fixedEffects = mergeEffects(fixed.effects, {
+                additive: fixed.proc,
+                replacement: {}
+            });
+        }
 
-        const combines = this.mod.settings.manageCombines && this.combinesReady ? planCombines(this.catalog, this.registered, this.activeCombines, limits.combines, collectionMetrics, {
-            ...context,
-            damage: damageMode ? context.damage : null
-        }) : null;
+        let deck = null;
+        let combines = null;
+
+        if (this.mod.settings.manageCombines) {
+            ({ deck, combines } = planLoadout(this.catalog, this.registered, equipped, this.activeCombines, limits, metrics, collectionMetrics, {
+                ...context,
+                optimizeDamage: powerMode,
+                collectionAuto: mode.collectionAuto
+            }));
+        } else {
+            deck = powerMode ? planDamageDeck(this.catalog, this.registered, equipped, limits, metrics, context) : planDeck(this.catalog, this.registered, equipped, limits, metrics, context);
+        }
+
+        let damageGain = null;
+
+        if (context.damage) {
+            const baseline = damage.damageValue(context.damage);
+            const total = combines ? damage.damageValue(context.damage, combines.bonuses) : deck.damageScore;
+
+            if (baseline > 0 && Number.isFinite(total)) damageGain = total / baseline - 1;
+        }
 
         return {
             deck,
@@ -871,7 +859,10 @@ class NetworkMod {
             limits,
             damageMode,
             powerMode,
+            damageGain,
+            damageType: context.damage?.type,
             healerSupport,
+            healerOffense,
             healerCrit
         };
     }
@@ -1084,11 +1075,11 @@ class NetworkMod {
 
         const overlap = plan.combines?.conflicts?.length || plan.deck.conflicts?.length;
 
-        return report + (plan.healerSupport ? this.t("healerSupport") + (plan.powerMode ? this.t("healerDamage") : "") : "") + (plan.healerCrit ? this.t("healerCrit") : "") + (overlap ? this.t("replacementEstimate") : "") + (plan.powerMode ? this.t("deckPower", {
+        return report + (plan.healerSupport ? this.t("healerSupport") + (plan.powerMode ? this.t("healerDamage") : "") : "") + (plan.healerOffense ? this.t("healerCrit") : "") + (overlap ? this.t("replacementEstimate") : "") + (plan.powerMode ? this.t("deckPower", {
             power: format(plan.deck.power),
-            gain: plan.deck.damageGain === null ? "—" : format(plan.deck.damageGain * 100)
+            gain: plan.damageGain === null ? "—" : format(plan.damageGain * 100)
         }) + this.t("deckPiercing", {
-            stat: statName(this.language, `${plan.metrics[0].startsWith("physical") ? "physical" : "magical"}Piercing`),
+            stat: statName(this.language, `${plan.damageType}Piercing`),
             value: format(plan.deck.piercing)
         }) + (plan.deck.damageBonus ? this.t("deckDamageBonus", {
             value: format(plan.deck.damageBonus * 100)
@@ -1138,17 +1129,13 @@ class NetworkMod {
             }));
         }
 
-        const metric = settings.priorities(this.mod.settings, this.me.job)[0];
-        const offensive = /^(physical|magical)(CritPower|Attack|Piercing|DefenseReduction)$/.test(metric);
-        const healer = [6, 7].includes(this.me.job);
-        const needsPower = this.mod.settings.optimizePower && (offensive || healer && metric === "magicalDefense");
-        const needsDamage = needsPower || !healer && offensive && this.mod.settings.manageCombines && this.mod.settings.collectionPriority === "cards";
+        const { damageMode: needsDamage } = settings.selectionMode(this.mod.settings, this.me.job);
 
         if (needsDamage && this.learnedSkillRanks === null) {
             states.push(this.t("statusSkills"));
         }
 
-        if (this.selectionPending && this.target && !this.selectionPlan && needsDamage && (!this.playerStats || !this.damageSkills.length || needsPower && !damage.DAMAGE_STATS.every(key => Number.isFinite(this.playerStats[key])))) {
+        if (this.selectionPending && this.target && !this.selectionPlan && needsDamage && (!this.playerStats || !this.damageSkills.length || !damage.DAMAGE_STATS.every(key => Number.isFinite(this.playerStats[key])))) {
             states.push(this.t("statusDamageData"));
         }
 

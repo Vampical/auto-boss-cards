@@ -24,7 +24,7 @@ You can use `bosscards` instead of `bcards`.
 
 ## When the set changes
 
-The module selects the nearest living boss or BAM when an eligible enemy appears, is killed or disappears. Only monsters with the primary aggro indicator, the yellow circle under the selected player, are eligible. The purple secondary-target circle does not replace this requirement. Selection does not wait for the circle to appear in combat. If the selected target changes, cards and collections are applied once. With several enemies present, the death or disappearance of the selected target causes a switch to the nearest surviving target.
+The module selects the nearest living boss or BAM when an eligible enemy appears, is killed or disappears. Bosses are identified by the boss gauge. Other monsters with the primary aggro indicator are BAMs regardless of size or elite status. Service objects, villagers and invulnerable mechanic actors without a resource or target information are excluded from selection, even if they have a boss gauge. Recognized shadow replicas of bosses do not trigger loadout changes either. Disabling BAM selection leaves automatic selection for bosses only. Only monsters with the primary aggro indicator, the yellow circle under the selected player, are eligible. The purple secondary-target circle does not replace this requirement. Selection does not wait for the circle to appear in combat. If the selected target changes, cards and collections are applied once. With several enemies present, the death or disappearance of the selected target causes a switch to the nearest surviving target.
 
 Normal hits, enemy health changes, movement and stat updates do not reapply a completed set. Enemies that appear while the area is loading are considered after loading finishes.
 
@@ -40,13 +40,15 @@ Choose a shared priority or a separate priority for each of the 13 classes, plus
 
 With damage selection enabled, the module evaluates the whole set using your current stats, class characteristics and **the highest learned level of each skill**. Lower and unlearned levels are excluded. Temporary changes to available skills do not erase known skills or their levels; a newly learned higher level is considered at the next selection.
 
-Power, physical and magical attack, crit power, the appropriate piercing and percentage hit-damage bonuses are compared by their expected benefit to your character. Bonuses such as Rogash's effect count only against the matching enemy species; their rarity and conditions are taken into account. A card with another offensive stat can therefore be better than a card with the selected crit-power stat. With damage selection disabled, the module aims to maximize the chosen stat. Bonuses against specific enemy species follow the current target when that setting is enabled.
+Power, physical and magical attack, crit power, the appropriate piercing and percentage hit-damage bonuses are compared by their expected benefit to your character. Bonuses such as Rogash's effect count only against the matching enemy species; their rarity and conditions are taken into account. A card with another offensive stat can therefore be better than a card with the selected crit-power stat. When Power is selected, the damage type follows your class. With damage selection disabled, the module aims to maximize the chosen stat; defensive priorities and crit factor also keep their own stat-based objectives. Bonuses against specific enemy species follow the current target when that setting is enabled.
 
-The percentage shown for a deck is an approximate estimate of the critical-hit damage gained from its cards. It is not a complete estimate of damage over a fight: your play, skill usage frequency and buff uptime also affect the result.
+The comparison starts from your character's stats without cards or collections. Equipped cards, permanent collection bonuses and their active buffs are removed from the baseline before evaluating a new set. With manual collection management, the effects you keep count once toward the evaluated set.
+
+The displayed percentage is an approximate estimate of the critical-hit damage gained from the whole card and collection set relative to that baseline. It is not a complete estimate of damage over a fight: your play, skill usage frequency and buff uptime also affect the result.
 
 ## Collections and healers
 
-Collections can use separate priorities or automatic selection. They are selected after the cards, taking the resulting deck, unlocked collections, activated card rarities and the active-effect limit into account.
+Cards and collections are selected together as one set. In offensive modes with damage selection enabled, the module chooses the greatest combined gain without separate collection-stat priorities restricting the result. Stat-based selection follows the chosen primary and tiebreaker priorities. Unlocked collections, activated card rarities and the active-effect limit are taken into account. With manual collection management, the module selects cards around the effects you keep.
 
 Permanent bonuses and supported critical-hit buffs count toward selection. Buffs that require a kill or resurrection do not improve a set's score against a living boss; permanent bonuses from those collections still count. Bonuses that require knockdown, stun or another special target state are excluded.
 
@@ -54,7 +56,7 @@ For Priest and Mystic, **Magical Defense** selects general magical defense to im
 
 With damage selection enabled, magical defense is maximized first, then offensive benefit breaks ties. Remaining cost and slots may be used for offensive cards. Collections are compared by their total magical defense from permanent bonuses and compatible temporary buffs, with damage also breaking ties. With damage selection disabled, only cards that increase general magical defense are selected.
 
-Choosing **Magical Crit Power** for a healer removes magical defense as a selection goal and prioritizes offense.
+Priest and Mystic offensive modes, including **Magical Crit Power**, attack, piercing and Power, completely exclude magical defense from selection goals, including the tiebreaker stat and separate collection priorities. With damage selection enabled, cards and automatically managed collections are selected together for the greatest combined gain of the corresponding damage type. With it disabled, the chosen stat is maximized.
 
 ## Additional settings
 
