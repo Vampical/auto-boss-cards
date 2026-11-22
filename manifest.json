@@ -1,8 +1,8 @@
 {
     "files": {
-        "README.en.md": "1c23b627a25cb0bf3565902342ab6434f412047b845a62bcd62e6fa8bbe5a44c",
-        "README.md": "3b9df3fb6d54140df2a9e7371ba34a71641d85db849b6f4dce2f533d282f6e74",
-        "index.js": "845e53086335d8e8c2ab16c576cdcfd1202c6c74c241ad47dfa64ab75c5932e2",
+        "README.en.md": "df3feb0454ad18d25d1556b4363f0aaa9f88581b51840adf16c8e30f4e696f6d",
+        "README.md": "bca375341b8040bf168864e70015ff16029d3a7eca4125c5706983bcdb9e5989",
+        "index.js": "dae799b6a1e8be8944b036b3c978975123564a37f5f73d015281a9eb82fd13d3",
         "lib/catalog.js": "ba3079896edc0f4244562388df637d0596665f071e5e6be4340b3716dc3ebce2",
         "lib/damage.js": "359e177efd9b51872254cf9bc8145969ef6f248195abe755b1f67676f329c1c2",
         "lib/effects.js": "6290316cf95fbe6a26ed24a05e1179c3f925f316a323a2d6bb924c4168c84ca9",
@@ -10,14 +10,15 @@
         "lib/locales/en.json": "c31807305e32c83b073c9b398d5e901a283dbc5ad84c91852dba4d2aa25ab5e5",
         "lib/locales/ru.json": "864e14e85b7bdf46c19b1a998b8fbd7f80425e27262a3ab22f32bdde2962fd37",
         "lib/npc.js": "d3acd6563e6a2bb07c7a75379ca94f0eae22b94556d4067657f88483ce2f9f0e",
-        "lib/planner.js": "f9527215a1564ce8adb0e3487e1c7c80b6404efa8739d655abf7f64642b4797a",
+        "lib/planner.js": "09b688115215c219ff904f850c6d717239e48848cae108c74aba40a6b33bf2b3",
         "lib/protocol.js": "13acedaf7bf82f0eda4e2ef9b71aaaf324bb617231e58859151fc53bb3a96fdf",
         "lib/settings.js": "48a42a90461d2673fc1353f802be07a0a14b8b84fc0b3ee803a0051c8630d141",
-        "module.json": "587268d019c579cb0a400087a33afe595b96a65a41e7cdb47518f407cda12ce7",
+        "module.json": "aeb99072d328b3bb9d7ec0bab15b81906dcf673cb7b4d874ad65790fc3935d85",
         "lib/config.js": "c8373dfb597a1e4c44a200d965110359359fa200977be519e9784194d2984fc4",
         "lib/migration.js": "b17769879187e0d56f2ac89de1257ea3ecfec4a8de87a0b460c411551831d3a8",
         "lib/settings_ru.js": "199c166748082d8c4b22109d3830858d5a66ff3753a5945dc8ee671e882ca2fc",
         "lib/abnormality.js": "9c1a46760273ba92e37567660df5d5d310b647f55aafc1abd36d139780d0a938",
-        "lib/passivity.js": "fd7d5974d8221e5f2f62f436b2b70b9e420657fcdb651fd9f8ab8e3526737983"
+        "lib/passivity.js": "fd7d5974d8221e5f2f62f436b2b70b9e420657fcdb651fd9f8ab8e3526737983",
+        "lib/ordering.js": "418e70e2a818a1990adb96edc4fee5aad83a3968b7000790a5f7c8d199aec145"
     }
 }

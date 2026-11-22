@@ -50,6 +50,8 @@ The displayed percentage is an approximate estimate of the critical-hit damage g
 
 Cards and collections are selected together as one set. In offensive modes with damage selection enabled, the module chooses the greatest combined gain without separate collection-stat priorities restricting the result. Stat-based selection follows the chosen primary and tiebreaker priorities. Unlocked collections, activated card rarities and the active-effect limit are taken into account. With manual collection management, the module selects cards around the effects you keep.
 
+With automatic collection management, selection also accounts for the installation order of conflicting bonuses. When a chosen set needs a specific order, the module removes the affected cards and collections once and installs them again in the required sequence.
+
 Permanent bonuses and supported critical-hit buffs count toward selection. Buffs that require a kill or resurrection do not improve a set's score against a living boss; permanent bonuses from those collections still count. Bonuses that require knockdown, stun or another special target state are excluded.
 
 For Priest and Mystic, **Magical Defense** selects general magical defense to improve the resistance reduction from Triple Nemesis and Volley of Curses. Defense against a specific monster species is excluded from this purpose.

@@ -207,6 +207,7 @@ class NetworkMod {
         this.target = null;
         this.selectionPending = false;
         this.selectionPlan = null;
+        this.appliedPassiveOrder = null;
         this.playerStats = null;
         this.statSources = null;
         this.damageSkills = [];
@@ -447,6 +448,7 @@ class NetworkMod {
             "C_CHANGE_CARD_PRESET"
         ]) {
             this.hook(name, name === "C_CHANGE_CARD_PRESET" ? "event" : 1, () => {
+                this.appliedPassiveOrder = null;
                 this.selectionPending = false;
                 this.selectionPlan = null;
                 this.clearSchedule();
@@ -831,10 +833,12 @@ class NetworkMod {
 
         let deck = null;
         let combines = null;
+        let applicationOrder = [];
 
         if (this.mod.settings.manageCombines) {
-            ({ deck, combines } = planLoadout(this.catalog, this.registered, equipped, this.activeCombines, limits, metrics, collectionMetrics, {
+            ({ deck, combines, applicationOrder = [] } = planLoadout(this.catalog, this.registered, equipped, this.activeCombines, limits, metrics, collectionMetrics, {
                 ...context,
+                controlPassiveOrder: true,
                 optimizeDamage: powerMode,
                 collectionAuto: mode.collectionAuto
             }));
@@ -854,6 +858,7 @@ class NetworkMod {
         return {
             deck,
             combines,
+            applicationOrder,
             metrics,
             collectionMetrics,
             limits,
@@ -870,44 +875,65 @@ class NetworkMod {
     nextOperation(plan) {
         const wanted = new Set(plan.deck.ids);
         const equipped = this.presets.get(this.currentPreset);
+        const wantedCombines = plan.combines ? new Set(plan.combines.ids) : null;
+        const operation = (kind, id, mount) => (kind === "card" ? {
+            request: mount ? "C_MOUNT_CARD" : "C_UNMOUNT_CARD",
+            reply: mount ? "S_MOUNT_CARD" : "S_UNMOUNT_CARD",
+            id,
+            preset: this.currentPreset
+        } : {
+            request: mount ? "C_ACTIVATE_CARD_COMBINE_LIST" : "C_DEACTIVATE_CARD_COMBINE_LIST",
+            reply: mount ? "S_ACTIVATE_CARD_COMBINE_LIST" : "S_DEACTIVATE_CARD_COMBINE_LIST",
+            id
+        });
+
+        if (plan.applicationOrder?.length && !plan.orderReset) {
+            plan.orderKey = JSON.stringify([this.currentPreset, [...wanted].sort(), [...wantedCombines].sort(), plan.applicationOrder]);
+            plan.orderReset = {
+                clearing: plan.orderKey !== this.appliedPassiveOrder,
+                cards: plan.applicationOrder.filter(item => item.kind === "card").map(item => item.id),
+                collections: plan.applicationOrder.filter(item => item.kind === "collection").map(item => item.id)
+            };
+        }
+
+        if (plan.orderReset?.clearing) {
+            for (const id of plan.orderReset.cards) {
+                if (equipped.has(id)) return operation("card", id, false);
+            }
+
+            for (const id of plan.orderReset.collections) {
+                if (this.activeCombines.has(id)) return operation("collection", id, false);
+            }
+
+            plan.orderReset.clearing = false;
+        }
 
         for (const id of equipped) {
-            if (!wanted.has(id)) return {
-                request: "C_UNMOUNT_CARD",
-                reply: "S_UNMOUNT_CARD",
-                id,
-                preset: this.currentPreset
-            };
+            if (!wanted.has(id)) return operation("card", id, false);
+        }
+
+        // Finish removals before adding an ordered group, so freed slots cannot reverse its writes.
+        if (wantedCombines) {
+            for (const id of this.activeCombines) {
+                if (!wantedCombines.has(id)) return operation("collection", id, false);
+            }
+        }
+
+        for (const item of plan.applicationOrder || []) {
+            if (!(item.kind === "card" ? equipped : this.activeCombines).has(item.id)) return operation(item.kind, item.id, true);
         }
 
         for (const id of wanted) {
-            if (!equipped.has(id)) return {
-                request: "C_MOUNT_CARD",
-                reply: "S_MOUNT_CARD",
-                id,
-                preset: this.currentPreset
-            };
+            if (!equipped.has(id)) return operation("card", id, true);
         }
 
         if (plan.combines) {
-            const wantedCombines = new Set(plan.combines.ids);
-
-            for (const id of this.activeCombines) {
-                if (!wantedCombines.has(id)) return {
-                    request: "C_DEACTIVATE_CARD_COMBINE_LIST",
-                    reply: "S_DEACTIVATE_CARD_COMBINE_LIST",
-                    id
-                };
-            }
-
             for (const id of wantedCombines) {
-                if (!this.activeCombines.has(id)) return {
-                    request: "C_ACTIVATE_CARD_COMBINE_LIST",
-                    reply: "S_ACTIVATE_CARD_COMBINE_LIST",
-                    id
-                };
+                if (!this.activeCombines.has(id)) return operation("collection", id, true);
             }
         }
+
+        if (plan.orderKey) this.appliedPassiveOrder = plan.orderKey;
 
         return null;
     }
@@ -992,6 +1018,7 @@ class NetworkMod {
         }, this.mod.settings.acknowledgementTimeout);
 
         this.pending = operation;
+        this.appliedPassiveOrder = null;
         this.debug(`${operation.request}: ${JSON.stringify(payload, (_, value) => (typeof value === "bigint" ? String(value) : value))}`);
 
         try {
