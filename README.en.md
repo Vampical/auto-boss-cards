@@ -44,7 +44,7 @@ Power, physical and magical attack, crit power, the appropriate piercing and per
 
 The comparison starts from your character's stats without cards or collections. Equipped cards, permanent collection bonuses and their active buffs are removed from the baseline before evaluating a new set. With manual collection management, the effects you keep count once toward the evaluated set.
 
-The displayed percentage is an approximate estimate of the critical-hit damage gained from the whole card and collection set relative to that baseline. It is not a complete estimate of damage over a fight: your play, skill usage frequency and buff uptime also affect the result.
+The displayed percentage estimates the gain in average damage per hit relative to that baseline. The module weights normal and critical hits using typical class rates measured in Asura encounters. The selection message shows the rate used. Temporary buffs are evaluated while active, so the estimate does not represent overall damage across the fight.
 
 ## Collections and healers
 

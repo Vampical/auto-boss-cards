@@ -9,8 +9,8 @@
     "stat_magicalDefenseReduction": "Flat magical resistance reduction",
     "deckDamageBonus": " Hit damage: +{value}%.",
     "deckPiercing": " {stat}: +{value}.",
-    "deckReference": " [Calculation resistance: 43500.]",
-    "deckPower": " Power: +{power}; estimated critical damage gain from cards and collections: {gain}%.",
+    "deckReference": " [Calculation resistance: {resistance}.]",
+    "deckPower": " Power: +{power}; estimated damage gain from cards and collections: {gain}% at {criticalChance}% critical hits.",
     "stat_magicalDefense": "Magical defense",
     "stat_physicalCritPower": "Physical crit power",
     "stat_magicalCritPower": "Magical crit power",
@@ -53,9 +53,9 @@
     "invalidLimits": "Invalid CollectionBook limits",
     "missingProcData": "DataCenter did not return all collection proc effects",
     "combatProc": "on critical hit, temporary",
-    "damageComparison": "[compared by critical-hit damage gain]",
+    "damageComparison": "[compared by average damage per hit]",
     "statusDamageData": "waiting for player stats / class skill coefficients",
     "healerDamage": " [Equal maximum magical defense: the deck is selected by damage.]",
-    "healerCollectionDamageComparison": "[equal total permanent and compatible proc magical defense: compared by critical-hit damage gain]",
+    "healerCollectionDamageComparison": "[equal total permanent and compatible proc magical defense: compared by average damage per hit]",
     "statusSkills": "waiting for learned skill ranks; re-enter your character after the first update"
 }

@@ -785,7 +785,7 @@ class NetworkMod {
             return null;
 
         if (powerMode) {
-            context.damage = damage.profile(this.playerStats, this.damageSkills, mode.profileMetric, this.learnedSkillRanks);
+            context.damage = damage.profile(this.playerStats, this.damageSkills, mode.profileMetric, this.learnedSkillRanks, mode.criticalChance);
             const sources = this.statSources;
 
             if (!context.damage || !damage.DAMAGE_STATS.every(key => Number.isFinite(context.damage.stats[key])) || !Number.isFinite(this.playerStats.genericCritical) || !sources?.cards || !this.combinesReady || !sources.combines)
@@ -866,6 +866,7 @@ class NetworkMod {
             powerMode,
             damageGain,
             damageType: context.damage?.type,
+            criticalChance: context.damage?.criticalChance,
             healerSupport,
             healerOffense,
             healerCrit
@@ -1104,13 +1105,14 @@ class NetworkMod {
 
         return report + (plan.healerSupport ? this.t("healerSupport") + (plan.powerMode ? this.t("healerDamage") : "") : "") + (plan.healerOffense ? this.t("healerCrit") : "") + (overlap ? this.t("replacementEstimate") : "") + (plan.powerMode ? this.t("deckPower", {
             power: format(plan.deck.power),
-            gain: plan.damageGain === null ? "—" : format(plan.damageGain * 100)
+            gain: plan.damageGain === null ? "—" : format(plan.damageGain * 100),
+            criticalChance: format(plan.criticalChance * 100)
         }) + this.t("deckPiercing", {
             stat: statName(this.language, `${plan.damageType}Piercing`),
             value: format(plan.deck.piercing)
         }) + (plan.deck.damageBonus ? this.t("deckDamageBonus", {
             value: format(plan.deck.damageBonus * 100)
-        }) : "") + this.t("deckReference") : "");
+        }) : "") + this.t("deckReference", { resistance: damage.REFERENCE_RESISTANCE }) : "");
     }
 
     preview() {
